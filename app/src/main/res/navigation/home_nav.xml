@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_nav"
+    app:startDestination="@id/schoolListFragment">
+    <fragment
+        android:id="@+id/schoolListFragment"
+        android:name="com.example.myapplication.ui.SchoolListFragment"
+        android:label="fragment_school_list"
+        tools:layout="@layout/fragment_school_list" >
+        <action
+            android:id="@+id/action_schoolListFragment_to_schoolSATFragment"
+            app:destination="@id/schoolSATFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/schoolSATFragment"
+        android:name="com.example.myapplication.ui.SATFragment"
+        android:label="SchoolSATFragment" >
+        <argument
+            android:name="dbn"
+            app:argType="string"/>
+    </fragment>
+</navigation>
