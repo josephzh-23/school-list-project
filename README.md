@@ -9,8 +9,10 @@ Main features of this projects are summarized as below:
 
 2. Upon encountering network error when loading school data, user can retry sending network requests.
 
-3. Project uses paging3 library to achieve paginagion to fetch school lists, MVVM architecture pattern (with repository + service), dependency injection(Hilt dagger)
+3. When user first opens the app and the first request times out or encounters an error, user can retry. 
+
+4. Project uses paging3 library to achieve paginagion to fetch school lists, MVVM architecture pattern (with repository + service), dependency injection(Hilt dagger)
 , flow and coroutine for asynchoronous programming technique. 
 
-4. Test cases are also included to test viewmodel live data and mock network requests 
+5. Test cases are also included to test viewmodel live data and mock network requests 
 
