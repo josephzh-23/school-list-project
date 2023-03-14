@@ -22,6 +22,7 @@ import com.example.myapplication.SchoolAdapter
 import com.example.myapplication.Util.toast
 import com.example.myapplication.databinding.FragmentSchoolListBinding
 import com.example.myapplication.setGone
+import com.example.myapplication.setVisible
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -74,13 +75,7 @@ class SchoolListFragment : Fragment() {
             }
 
 
-            // Observe loading state
-            lifecycleScope.launch {
-                schoolAdapter.loadStateFlow.collect {
-                    val state = it.refresh
-                    prgBar.isVisible = state is LoadState.Loading
-                }
-            }
+
 
             loadAdapter = LoadMoreAdapter()
             loadAdapter.retry = { schoolAdapter.retry() }
@@ -93,17 +88,7 @@ class SchoolListFragment : Fragment() {
 
                     // Case 1: if user opens app and it's not connected to internet
                     if (schoolAdapter.itemCount == 0) {
-
-                        viewModel.launchPagingSource()
-                        lifecycleScope.launch {
-                            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                                if (viewModel.checkConnection?.value == true) {
-                                    viewModel.schoolList.collect {
-                                        schoolAdapter.submitData(it)
-                                    }
-                                }
-                            }
-                        }
+                        launchPageFlow()
 
                         // Case 2: when some items are already loaded and
                         // user turns off wifi and then later restores wifi connection
@@ -123,9 +108,45 @@ class SchoolListFragment : Fragment() {
             }
 
             rlSchools.adapter = schoolAdapter.withLoadStateFooter(loadAdapter)
+
+            // Observe loading state
+            lifecycleScope.launch {
+                schoolAdapter.loadStateFlow.collect {
+                    val state = it.refresh
+
+                    prgBar.isVisible = state is LoadState.Loading
+
+                    if (it.append.endOfPaginationReached) {
+                        toast("end of school list")
+                    }
+
+                    // case 3: First time when user open app and the network request times out
+                    // User can retry sending network request
+                    if(state is LoadState.Error && schoolAdapter.itemCount==0){
+                        btnRetry.setVisible()
+                        btnRetry.setOnClickListener {
+                            launchPageFlow()
+                        }
+                    }
+                }
+            }
         }
     }
 
+
+    fun launchPageFlow() = with(binding) {
+        viewModel.launchPagingSource()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                if (viewModel.checkConnection?.value == true) {
+                    viewModel.schoolList.collect {
+                        btnRetry.setGone()
+                        schoolAdapter.submitData(it)
+                    }
+                }
+            }
+        }
+    }
     private fun isNetworkConnected(): Boolean {
         val cm =
             requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

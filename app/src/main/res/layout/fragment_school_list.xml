@@ -38,5 +38,18 @@
         app:layout_constraintStart_toStartOf="@+id/prgBar"
         app:layout_constraintTop_toBottomOf="@+id/prgBar" />
 
+    <Button
+        android:id="@+id/btnRetry"
+        android:visibility="gone"
+        android:layout_width="89dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center_horizontal"
+        android:text="Retry"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="@+id/prgBar"
+        app:layout_constraintStart_toStartOf="@+id/prgBar"
+        app:layout_constraintTop_toBottomOf="@+id/errorText" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,7 +11,7 @@ import retrofit2.HttpException
 
 const val START_PAGE_INDEX = 0
 class SchoolPagingSource(
-    private val repository: SchoolRepository ,
+    private val repository: SchoolRepository
 ) : PagingSource<Int, SchoolItem>() {
 
     // current page stored in params

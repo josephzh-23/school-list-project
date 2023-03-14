@@ -2,7 +2,6 @@ package com.example.myapplication.Adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -31,30 +30,33 @@ class LoadMoreAdapter : LoadStateAdapter<LoadMoreAdapter.ViewHolder>() {
 
         init {
             binding.btnRetry.setOnClickListener {
+                binding.errorText.text = ""
                 it.setGone()
                 retry?.invoke()
-                binding.errorText.setGone()
             }
         }
 
         fun setData(state: LoadState) {
             binding.apply {
-                prgBarLoadMore.isVisible = state is LoadState.Loading
-                btnRetry.setGone()
 
-                if (loadState is LoadState.Error) {
-                    errorText.setVisible()
-                    errorText.text = (loadState as LoadState.Error).error.localizedMessage
 
-                    btnRetry.isVisible = loadState is LoadState.Error
-                    if (!isNetworkAvailable) btnRetry.setGone()
-
-                    // Clearing the error text
-                    if (isNetworkAvailable && btnRetry.isVisible) {
-                        errorText.text = ""
+                when (state) {
+                    // When connection is restored this viewholder
+                    // will have a error loading status
+                    is LoadState.Error -> {
+                        if (isNetworkAvailable) {
+                            btnRetry.setVisible()
+                            errorText.setGone()
+                            prgBarLoadMore.setGone()
+                        }
                     }
+                    is LoadState.Loading -> {
+                        btnRetry.setGone()
+                        errorText.setVisible()
+                        prgBarLoadMore.setVisible()
+                    }
+                    else -> {}
                 }
-
             }
         }
     }
